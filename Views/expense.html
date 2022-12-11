@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+</head>
+<link rel='stylesheet' type='text/css' media='screen' href='style.css'>
+
+<body>
+
+    <h1 style="text-align: center"> Expense Tracker</h1>
+
+    <div style="text-align: center ; margin-top: 35px;">
+        <form id="perpage">
+          Expenses Per Page : <input type="number" min="3" max="20"  name="itemsPerPage" >
+          <button type="submit">submit</button>
+        </form>
+      </div>
+    <div id="pagination"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"> </script>
+    <div id="darkk">
+        <section id='area' class="container">
+
+            <button class="loginbut" id="logout">LogOut</button>
+
+            <form id="my-form" class="login-form">
+                <div class="details">
+                    <div class="msg"></div>
+
+                    <div class="card" class="form-group ">
+                        <label for="amount">Choose Expense Amount</label>
+                        <input type="number" id="amount" class="form-control" placeholder="Amount " id="UserName">
+                    </div>
+                    <br>
+
+                    <div class="card" class="form-group log-status">
+                        <label for="des">Choose Desciption</label>
+                        <input type="text" id="des" class="form-control" placeholder="Desciption " id="UserName">
+                    </div>
+                    <br>
+                    <div class="card" class="form-group log-status">
+
+                        <label>Choose Category: </label>
+                        <input list="category" id=Category class="form-control" id="UserName">
+                        <datalist id="category">
+                            <option value="Fuel" />
+                            <option value="Food" />
+                            <option value="Electricity" />
+                            <option value="Fees" />
+                            <option value="Luxuries" />
+                        </datalist>
+                    </div>
+                    <br>
+                    <button class="log-btn" id="premium">Buy Premium</button>
+                    <br>
+                </div>
+                <br>
+                <br>
+                <div class="btn">
+                    <button class="log-btn" id="clickme">Add Expense</button>
+                </div>
+                <br>
+                <br>
+                <!-- <div class="btn">
+                    <button class="log-btn" id="report">Reports</button>
+                </div>
+                <br>
+                <br> -->
+                <div class="btn" id="json">
+                    
+                </div>
+               
+                    <!-- <div class="btn">
+                        <a href="file:///C:/Users/ADMIN/Documents/ExpenseProject/Views/leaderboad.html">
+                        <button class="log-btn" id="leader">Leaderboard</button>
+                        </a>
+                    </div> -->
+
+    </div>
+
+    <ul id="users"></ul>
+
+    </ul>
+    </section>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="expense.js"></script>
+</body>
+
+</html>
+
+
+<!-- <div class="login-form">
+    <h1>Vini</h1>
+    <div class="form-group ">
+      <input type="text" class="form-control" placeholder="Username " id="UserName">
+      <i class="fa fa-user"></i>
+    </div>
+    <div class="form-group log-status">
+      <input type="password" class="form-control" placeholder="Password" id="Passwod">
+      <i class="fa fa-lock"></i>
+    </div>
+     <span class="alert">Invalid Credentials</span>
+     <a class="link" href="#">Lost your password?</a>
+    <button type="button" class="log-btn" >Log in</button>
+    
+   
+  </div> -->
