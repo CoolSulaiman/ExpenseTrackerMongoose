@@ -2,18 +2,19 @@ const uuid = require('uuid');
 const sgMail = require('@sendgrid/mail');
 const bcrypt = require('bcrypt');
 
-const User = require('../Models/User');
+const User = require('../Models/user');
 const Forgotpassword = require('../Models/forgotpassword');
 
  exports.forgotpassword = async (req, res) => {
 
     try {
         const { email } =  req.body;
-        const user = await User.findOne({where : { email }});
-        const rc=user.dataValues.id
+        const user = await User.findOne( { email });
+        console.log(user._id,">>>>>>>>>")
+        const _id=user._id
         if(user){
             const id = uuid.v4();
-            Forgotpassword.create({ id , active: true, userId:rc })
+            Forgotpassword.create({active: true, userId:_id ,uuid:id })
                 .catch(err => {
                     throw new Error(err)
                 })
@@ -51,15 +52,17 @@ const Forgotpassword = require('../Models/forgotpassword');
 
  exports.resetpassword = (req, res) => {
     const id =  req.params.id;
-    Forgotpassword.findOne({ where : { id }}).then(forgotpasswordrequest => {
+    Forgotpassword.findOne({uuid : id}).then(forgotpasswordrequest => {
         if(forgotpasswordrequest){
-            forgotpasswordrequest.update({ active: false});
+            // forgotpasswordrequest.update({ active: false});
+            Forgotpassword.active = false ;
+            Forgotpassword.save()
             res.status(200).send(`<html>
                                     <script>
                                         function formsubmitted(e){
                                             e.preventDefault();
                                             console.log('called')
-                                        }
+                                        } 
                                     </script>
                                     <form action="/password/updatepassword/${id}" method="get">
                                         <label for="newpassword">Enter New password</label>
@@ -78,9 +81,9 @@ exports.updatepassword=(req,res,next)=>{
 
             const { newpassword } = req.query;
             const { resetpasswordid } = req.params;
-            Forgotpassword.findOne({ where : { id: resetpasswordid }}).then(resetpasswordrequest=>{
+            Forgotpassword.findOne( { id: resetpasswordid }).then(resetpasswordrequest=>{
  
-    User.findOne({where:{id:resetpasswordrequest.userId}})
+    User.findOne({id:resetpasswordrequest.userId})
     .then(user=>{
         if(user){
             // Encryption of password

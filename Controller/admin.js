@@ -14,27 +14,29 @@ exports.postSignup=async(req,res,next)=>{
                     return res.status(400).json({message:'add all fields'})
                 }
 
-                const user = await User.findAll({where:{email}});
-                if(user.length>0){
-                    return res.status(409).json({message:'user already exist'})
-                }
+                // const user = await User.findOne({where:{email}});
+                // if(user.length>0){
+                //     return res.status(409).json({message:'user already exist'})
+                // }
         
                 const saltRounds=10;
                 bcrypt.hash(password , saltRounds , async(err,hash) =>{
-                    const data= await User.create({
-                        Name:name,
-                        Email:email,
-                        Password:hash,
-                        ispremiumuser:false,
+                    const user= await User.create({
+                        name:name,
+                        email:email,
+                        password:hash,
+                        ispremiumuser:false
                         
                     })
                 })
-  
+
         
+
                 return res.status(201).json({message:'successfully created new user'})        }
 
 
         catch(err){
+            console.log(err)
         res.status(500).json({error:err})
         }
         
@@ -53,16 +55,18 @@ exports.postSignup=async(req,res,next)=>{
         }
 
         
-        const user = await User.findAll({where:{email}})
+        const user = await User.findOne({email})
+
         if(user.length === 0){
             return res.status(404).json({message:'user not found'})
         }
 
 
 
-        const foundUser = user[0];
-        bcrypt.compare(password, foundUser.Password, (err, matchPassUser)=>{
-            console.log("typed--" ,password, "databse", foundUser.Password, "compaared---", matchPassUser)
+        const foundUser = user;
+        console.log(foundUser,"///////////")
+        bcrypt.compare(password, foundUser.password, (err, matchPassUser)=>{
+            console.log("typed--" ,password, "databse", foundUser.password, "compaared---", matchPassUser)
             if(!matchPassUser){
              return res.status(401).json({message:'User not authorized'})
             }
@@ -84,6 +88,8 @@ exports.postSignup=async(req,res,next)=>{
     
     }
     catch(err){
+        console.log(err)
+
         res.status(500).json({error:err})
         }
     

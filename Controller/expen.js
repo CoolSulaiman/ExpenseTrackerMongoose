@@ -3,62 +3,78 @@ const User = require('../Models/UserExpense')
 const sequelize=require('sequelize')
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
+const {ObjectId} = require('mongoose')
 
 const downloadurl=require('../Models/downloadUrl')
 
-const User1=require('../Models/User')
+const User1=require('../Models/user')
 const Expense=require('../Models/UserExpense')
 
-const AWS=require('aws-sdk')
+const AWS=require('aws-sdk');
+const { ObjectID } = require('bson');
 
-exports.getUser =  (req,res,next)=>{
+exports.getUser =  async(req,res,next)=>{
+    console.log("bbbbbb",req.user._id,"bbbbbb")
+    let limit_items =(req.body.itemsPerPage) || 2 ;
 
-// User
-// .findAll({where :{userId : req.user.id}})
-// .then((response)=>{
+    let page = req.params.page || 1;
+    
+      let totalItems;
+      Expense.count({userId:req.user._id})
+        .then((totalProducts) => {
+          totalItems = totalProducts;
+          return Expense.find({userId:req.user._id}).skip((page-1)*limit_items).limit(limit_items);
+        })
+        .then((products) => {
+            console.log("))))))))))))",products)
+          res.status(200).json({
+            products,
+            success: true,
+            data: {
+              currentPage: page,
+              hasNextPage: 
+              totalItems > page * limit_items,
+              hasPreviousPage: page > 1,
+              nextPage: +page + 1,
+              previousPage: +page - 1,
+              lastPage: Math.ceil(totalItems / limit_items),
+            },
+    
+        })
+    });
+//     let page = req.params.page || 1
+//     let limit_items = +(req.body.itemsPerPage) || 2 ;
 
-//     res.status(200).json({response})
-// })
-// .catch((err)=>{
-//     res.status(500).json({err})
-// })
+//     let totalItems 
 
-let limit_items = +(req.body.itemsPerPage) || 2 ;
+//     try {
+//         let count = await Expense.find().count()
+//         totalItems = count ; 
+// console.log(count,"mmmmmm")
+//         let products = await Expense.find({userId: req.user._id}).skip((page-1)*limit_items).limit(limit_items)
+//         console.log(products,"kkkkkkkkkk")
 
-let page = req.params.page || 1;
+//         res.status(200).json({ products,
+//                         data: {
+                
+//                           currentPage: page,
+//                           hasNextPage: 
+//                           totalItems > page * limit_items,
+//                           hasPreviousPage: page > 1,
+//                           nextPage: +page + 1,
+//                           previousPage: +page - 1,
+//                           lastPage: Math.ceil(totalItems / limit_items),
+//                         },
+//         })
+//     } catch (error) {
+//         res.status(500).json({message:'unable to get expwnse'})
+//     }
 
-  let totalItems;
-  Expense.count({where:{userId:req.user.id}})
-    .then((totalProducts) => {
-      totalItems = totalProducts;
-      return Expense.findAll({
-        where:{userId:req.user.id},
-        offset: (page - 1) * limit_items,
-        limit: limit_items
-      });
-    })
-    .then((products) => {
-        console.log("))))))))))))",products)
-      res.status(200).json({
-        products,
-        success: true,
-        data: {
-          currentPage: page,
-          hasNextPage: 
-          totalItems > page * limit_items,
-          hasPreviousPage: page > 1,
-          nextPage: +page + 1,
-          previousPage: +page - 1,
-          lastPage: Math.ceil(totalItems / limit_items),
-        },
-
-    })
-});
 }
 
 exports.getAllusersforPremimum= (req,res,next)=>{
 
-           User1.findAll({attributes: ['id', 'Name', 'Email']})
+           User1.find({attributes: ['id', 'name', 'email']})
            .then(users=>{
             
             res.status(200).json({users})
@@ -71,12 +87,15 @@ exports.getAllusersforPremimum= (req,res,next)=>{
 }
 
 exports.postExpensespreminm=(req,res,next)=>{
-
+console.log(req.body,">>>>")
 const vc=req.body.OBJ
 
-User.findAll({where:{userId:vc } })
+const _id = ObjectID(vc)
+console.log(">>>.", _id)
+User.find({userId:_id } )
 .then((response)=>{
 
+    console.log(response)
     res.status(200).json({response})
 })
 .catch((err)=>{
@@ -86,37 +105,44 @@ User.findAll({where:{userId:vc } })
 
 
 
-exports.postAdduser=async (req,res,next)=>{
-
+exports.postAddExpense=async (req,res,next)=>{
+console.log(">>>>>>>>>>>>>>>",req.body)
 try{
         const amt=req.body.Amount;
         const des=req.body.Description;
         const category=req.body.Category
 
 const data= await User.create({
-    Amount:amt,
-    Description:des,
-    Category:category,
-    userId:req.user.id
+    amount:amt,
+    description:des,
+    category:category,
+    userId:req.user._id
 
 })
 
 res.status(201).json({NewUser:data})
 }
 catch(err){
+    console.log(err)
 res.status(500).json({error:err})
 }
 }
 
 exports.deleteUser=async(req,res,next)=>{
+    try{   
+        const expenseId=req.params.id;
 
-    try{
-        const id=req.params.id;
+        let expense = await User.findById(expenseId)
+        // console.log(expense)
+        if(!expense){
+            return res.status(404).json({message:'expense not found'})
+        }
 
-        const data=await User
-        .destroy({where:{id:id , userId:req.user.id} })
-
-        res.status(200).json({message:"Successful"})
+        if(expense.userId.toString() !== req.user._id.toString()){
+            return res.status(401).json("Not Allowed");
+        }
+        await Expense.findByIdAndRemove(expenseId)
+        res.status(200).json({message:'deleted sucessfully'})
     }
 
     catch(err){
@@ -164,8 +190,9 @@ function uploadtoS3(data , filename){
 
 exports.downloadExpense= async (req,res,next)=>{
 
- User.findAll({where:{userId:req.user.id}})
+ User.find({userId:req.user._id})
   .then(async response=>{
+    // console.log()
     const expenseStringify=JSON.stringify(response)
 
     const filename="Expense.txt";
@@ -192,7 +219,7 @@ exports.downloadExpense= async (req,res,next)=>{
 
 exports.downloadAllUrl = async(req,res,next) => {
 
-    downloadurl.findAll({where:{userId:req.user.id}})
+    downloadurl.find({where:{userId:req.user._id}})
     .then(urls=>{
         if(!urls){
             res.status(404).json({ message:'no urls found with this user' , success: false});

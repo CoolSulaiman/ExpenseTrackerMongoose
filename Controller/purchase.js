@@ -1,6 +1,6 @@
 const Razorpay = require('razorpay');
 const Order = require('../Models/order');
-
+const User = require('../Models/user')
 require('dotenv').config()
 
 exports.purchasepremium = (req,res,next)=>{
@@ -42,30 +42,30 @@ exports.updateTransactionStatus = async(req,res,next)=>{
             orderId:razorpay_order_id,
             signature:razorpay_signature,
             status:"successful",
-            userId:req.user.id
+            userId:req.user._id
 
         })
 
-        Order.findAll({where: {orderId: razorpay_order_id}})
-        .then((order) => {
-            if(order[0].status == "successful") {
-                req.user.update({ispremiumuser: true})
-                res.status(200).json({message: "Successfully Saved"});
-            }
-        })
-        .catch(err => {throw new Error(err)});
+        // User.findById(req.user._id)
+        // .then((order) => {
+        //     // if(order[0].status == "successful") {
+        //         order.ispremiumuser = true ;
+        //          order.save();
 
-        // Order.findOne({where : {orderid : razorpay_order_id  }}).then(order=>{
-        //     order.update({ paymentid: razorpay_payment_id , signature:razorpay_signature , status: 'SUCCESSFUL'}).then(()=>{
-        //         req.user.update({ispremiumuser : true})
-        //         return res.status(202).json({sucess: true, message: "Transaction Successful"});
-        //     }).catch((err)=>{
-        //         throw new Error(err);
-        //     })
-        // }).catch(err=>{
-        //     throw new Error(err);
+        //         res.status(200).json({message: "Successfully Saved"});
+        //     // }
         // })
+        // .catch(err => {
+        //     console.log(err)
+        //     throw new Error(err)});
+        
+        let user = await  User.findById(req.user._id);
+        console.log(user);
+        user.ispremiumuser = true ;
+        await user.save();
+        res.status(200).json({message: "Successfully Saved"});
+   
     } catch (error) {
-        res.status(403).json({ errpr: err, message: 'Sometghing went wrong' })
+        res.status(403).json({ error: error, message: 'Sometghing went wrong' })
     }
 }

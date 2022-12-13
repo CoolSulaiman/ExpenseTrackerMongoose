@@ -7,7 +7,7 @@ const adminController=require('../Controller/expen')
 
 router.post('/getuser/:page', middleware.authentication ,adminController.getUser)
 
-router.post('/addUser', middleware.authentication, adminController.postAdduser)
+router.post('/addUser', middleware.authentication, adminController.postAddExpense)
 
 router.delete('/deleteUser/:id',  middleware.authentication, adminController.deleteUser)
 

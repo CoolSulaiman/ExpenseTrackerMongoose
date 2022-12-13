@@ -21,9 +21,9 @@ window.addEventListener('DOMContentLoaded',(()=>{
         document.getElementById('area').classList.add('lightt')
         document.getElementById('my-form').classList.add('lightt')
 
-        document.getElementById('json').innerHTML=`<a  id="json1" href="file:///C:/Users/ADMIN/Documents/ExpenseProject/Views/DownloadReports/reports.html">
+        document.getElementById('json').innerHTML=`<a  id="json1" href="file:///C:/Users/ADMIN/Documents/ExpTrackerMongoose/Views/DownloadReports/reports.html">
         Reports
-     </a><br> <br><a  id="json1" href="file:///C:/Users/ADMIN/Documents/ExpenseProject/Views/leaderboad.html">
+     </a><br> <br><a  id="json1" href="file:///C:/Users/ADMIN/Documents/ExpTrackerMongoose/Views/leaderboad.html">
         Leaderboard
      </a>`
 
@@ -50,8 +50,8 @@ async function getLoadExpenses(page ,itemsPerPage){
 
     try {
         let response = await axios.post(`http://localhost:8000/getuser/${page}` ,{itemsPerPage:itemsPerPage}, {headers:{"Authorisation" : token}})
-        console.log(response.data.products)
         paged.innerHTML="";
+        console.log("response")
 
         showNewUserOnScreen111(response.data.products)
 
@@ -72,9 +72,9 @@ function showNewUserOnScreen111(user){
     for(let i=0;i<user.length;i++)
     {
     var parentNode=document.getElementById('users');
-    const childHTML=`<li id=${user[i].Amount} > ${user[i].Amount} - ${user[i].Description}- ${user[i].Category}
-                        <button onclick=deletexpense('${user[i].Amount}','${user[i].id}')> Delete Expense</button>
-                        <button onclick=edit('${user[i].Amount}','${user[i].Description}','${user[i].Category}','${user[i].id}')> Edit Expense </button>`
+    const childHTML=`<li id=${user[i].amount} > ${user[i].amount} - ${user[i].description}- ${user[i].category}
+                        <button onclick=deletexpense('${user[i].amount}','${user[i]._id}')> Delete Expense</button>
+                        <button onclick=edit('${user[i].amount}','${user[i].description}','${user[i].category}','${user[i]._id}')> Edit Expense </button>`
     parentNode.innerHTML= parentNode.innerHTML+childHTML;
 }
 }
@@ -83,6 +83,7 @@ function showPagination({currentPage,hasNextPage,hasPreviousPage,nextPage,previo
     // pagination.innerHTML =null;
     
     if(hasPreviousPage){
+        console.log("prvious")
         const button1 = document.createElement('button');
 
         button1.innerHTML = previousPage ;
@@ -98,6 +99,8 @@ function showPagination({currentPage,hasNextPage,hasPreviousPage,nextPage,previo
     pagination.appendChild(button2)
 
     if(hasNextPage){
+        console.log("next")
+
         const button3 = document.createElement('button');
         button3.innerHTML = nextPage ;
         button3.addEventListener('click' , ()=>getLoadExpenses(nextPage ,itemsPerPage))
@@ -137,9 +140,9 @@ function addExpense(e){
         function showNewUserOnScreen(user){
 
             var parentNode=document.getElementById('users');
-            const childHTML=`<li id=${user.Amount} > ${user.Amount} - ${user.Description}- ${user.Category}
-                                <button onclick=deletexpense('${user.Amount}','${user.id}')> Delete Expense</button>
-                                <button onclick=edit('${user.Amount}','${user.Description}','${user.Category}','${user.id}')> Edit Expense </button>`
+            const childHTML=`<li id=${user.amount} > ${user.amount} - ${user.description}- ${user.category}
+                                <button onclick=deletexpense('${user.amount}','${user._id}')> Delete Expense</button>
+                                <button onclick=edit('${user.amount}','${user.description}','${user.category}','${user._id}')> Edit Expense </button>`
             parentNode.innerHTML= parentNode.innerHTML+childHTML;
         }
 
@@ -273,7 +276,7 @@ function addExpense(e){
 document.getElementById('logout').onclick = function(e){
     e.preventDefault();
     localStorage.removeItem('token');
-    window.location.href = 'file:///C:/Users/ADMIN/Documents/ExpenseProject/Views/login.html'
+    window.location.href = 'file:///C:/Users/ADMIN/Documents/ExpTrackerMongoose/Views/login.html'
 }
 
 

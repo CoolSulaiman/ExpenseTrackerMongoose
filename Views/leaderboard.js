@@ -7,7 +7,7 @@ window.addEventListener('DOMContentLoaded',(()=>{
 
         axios.get('http://localhost:8000/premium')
         .then(res=>{
-                console.log(res.data.users)
+                console.log(res.data ,"kkkk")
                 showeUSeronLeader(res.data.users)
         })
         .catch(err=>{
@@ -23,8 +23,8 @@ function showeUSeronLeader(data){
     for(let i=0;i<data.length;i++)
     {
     var parentNode=document.getElementById('ur');
-    const childHTML=`UserID-${data[i].id}    Name-- ${data[i].Name} 
-    <button onclick=CheckExpense('${data[i].id}')> CheckExpense</button> <br> `
+    const childHTML=`UserID-${data[i]._id}    Name-- ${data[i].name} 
+    <button onclick=CheckExpense('${data[i]._id}')> CheckExpense</button> <br> `
     console.log(childHTML)
 
     parentNode.innerHTML= parentNode.innerHTML+childHTML;
@@ -52,7 +52,7 @@ function ShowExpenseONscreen(data){
     for(let i=0;i<data.length;i++)
     {
     var parentNode=document.getElementById('expo');
-    const childHTML=`Amount--${data[i].Amount}    Category-- ${data[i].Category}    Description-- ${data[i].Description} <br> `
+    const childHTML=`Amount--${data[i].amount}    Category-- ${data[i].category}    Description-- ${data[i].description} <br> `
     console.log(childHTML)
 
     parentNode.innerHTML= parentNode.innerHTML+childHTML;

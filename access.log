@@ -1,0 +1,3 @@
+::1 - - [11/Dec/2022:12:05:04 +0000] "GET /user/login HTTP/1.1" 404 149 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+::1 - - [11/Dec/2022:12:05:15 +0000] "GET /password/resetpassword/63d5d91e-49f3-40fd-b647-79fb0422d142 HTTP/1.1" - - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+::1 - - [11/Dec/2022:12:05:15 +0000] "GET /password/resetpassword HTTP/1.1" 404 161 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"

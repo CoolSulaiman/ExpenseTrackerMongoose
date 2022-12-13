@@ -2,8 +2,9 @@ const express=require('express')
 
 const app=express()
 const bycrpt=require('bcrypt')
-const sequelize=require('./Util/database')
+// const sequelize=require('./Util/database')
 const bodyParser = require('body-parser');
+const mongoose =require('mongoose')
 
 const helmet =require('helmet')
 const compression = require('compression')
@@ -12,7 +13,7 @@ const fs = require('fs');
 const path = require('path');
 
 
-const accessLogStream = fs.createWriteStream('access.log', {flag: 'a'})
+// const accessLogStream = fs.createWriteStream('access.log', {flag: 'a'})
 const adminRoutes=require('./Routes/admin')
 const expenRoutes=require('./Routes/expen')
 const purchaseRouter = require('./Routes/purchase')
@@ -37,34 +38,41 @@ app.use(expenRoutes)
 
 app.use(helmet())
 app.use(compression());
-app.use(morgan('combined', {stream: accessLogStream}));
+// app.use(morgan('combined', {stream: accessLogStream}));
 app.use('/payment' , purchaseRouter)
 
 app.use('/password', resetPasswordRoutes);
 
 
-User.hasMany(Expense)
-Expense.belongsTo(User)
+// User.hasMany(Expense)
+// Expense.belongsTo(User)
 
-User.hasMany(Order);
-Order.belongsTo(User);
+// User.hasMany(Order);
+// Order.belongsTo(User);
 
-User.hasMany(Forgotpassword);
-Forgotpassword.belongsTo(User);
+// User.hasMany(Forgotpassword);
+// Forgotpassword.belongsTo(User);
 
-Downloadurl.belongsTo(User);
-User.hasMany(Downloadurl);
+// Downloadurl.belongsTo(User);
+// User.hasMany(Downloadurl);
 
-sequelize
-// .sync({force:true})
-.sync()
-.then(result=>{
-    app.listen( 8000)
+// sequelize
+// // .sync({force:true})
+// .sync()
+// .then(result=>{
+//     app.listen(8000)
+// })
+// .catch(err=>{
+//     console.log(err)
+// })
+
+
+
+mongoose.connect('mongodb+srv://Skhan:ameensab@cluster0.hhc4rdx.mongodb.net/Expense?retryWrites=true&w=majority')
+.then(()=>{
+    app.listen(8000 , (req,res)=>{
+        console.log('Connected')
+    })
 })
-.catch(err=>{
-    console.log(err)
-})
-
-
 
 
